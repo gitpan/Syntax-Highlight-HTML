@@ -3,7 +3,7 @@ use strict;
 use HTML::Parser;
 
 { no strict;
-  $VERSION = '0.03';
+  $VERSION = '0.04';
   @ISA = qw(HTML::Parser);
 }
 
@@ -13,7 +13,7 @@ Syntax::Highlight::HTML - Highlight HTML syntax
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
@@ -381,12 +381,13 @@ SE<eacute>bastien Aperghis-Tramoni, E<lt>sebastien@aperghis.netE<gt>
 
 Please report any bugs or feature requests to
 C<bug-syntax-highlight-html@rt.cpan.org>, or through the web interface at
-L<https://rt.cpan.org/>.  I will be notified, and then you'll automatically
-be notified of progress on your bug as I make changes.
+L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=Syntax-Highlight-HTML>. 
+I will be notified, and then you'll automatically be notified of 
+progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C)2004 Sébastien Aperghis-Tramoni, All Rights Reserved.
+Copyright (C)2004 SE<eacute>bastien Aperghis-Tramoni, All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

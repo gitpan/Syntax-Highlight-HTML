@@ -11,8 +11,8 @@ lib/Syntax/Highlight/HTML.pm
 eg/html-syntax.css
 eg/filter.pl
 eg/highlight.pl
-t/Test/More.pm
 t/00load.t
+t/00prereq.t
 t/01api.t
 t/10highlight.t
 t/podcover.t

@@ -4,10 +4,10 @@ BEGIN { plan tests => 13 }
 use Syntax::Highlight::HTML;
 
 # check that the following functions are available
-ok( defined \&Syntax::Highlight::HTML::new             ); #01
-ok( defined \&Syntax::Highlight::HTML::parse           ); #02
-ok( defined \&Syntax::Highlight::HTML::_highlight_tag  ); #03
-ok( defined \&Syntax::Highlight::HTML::_highlight_text ); #04
+ok( exists &Syntax::Highlight::HTML::new               ); #01
+ok( exists &Syntax::Highlight::HTML::parse             ); #02
+ok( exists &Syntax::Highlight::HTML::_highlight_tag    ); #03
+ok( exists &Syntax::Highlight::HTML::_highlight_text   ); #04
 
 # create an object
 my $highlighter = undef;
