@@ -16,3 +16,5 @@
 .h-attr { color: #000000; font-weight: bold;  }   /* attribute name       */
 .h-attv { color: #333399;                     }   /* attribute value      */
 .h-ent  { color: #cc3333;                     }   /* entity               */
+
+.h-lno  { color: #aaaaaa; background: #f7f7f7;}   /* line numbers         */

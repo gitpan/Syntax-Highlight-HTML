@@ -3,7 +3,7 @@ use strict;
 use HTML::Parser;
 
 { no strict;
-  $VERSION = '0.01';
+  $VERSION = '0.02';
   @ISA = qw(HTML::Parser);
 }
 
@@ -13,7 +13,7 @@ Syntax::Highlight::HTML - Highlight HTML syntax
 
 =head1 Version
 
-Version 0.01
+Version 0.02
 
 =cut
 
@@ -26,6 +26,7 @@ my %classes = (
     attr_name     => 'h-attr',  # the attribute name
     attr_value    => 'h-attv',  # the attribute value
     entity        => 'h-ent',   # any entities: &eacute; &#171;
+    line_number   => 'h-lno',   # line number
 );
 
 my %defaults = (
@@ -133,7 +134,7 @@ sub parse {
     ## add line numbering?
     if($self->{options}{nnn}) {
         my $i = 1;
-        $self->{output} =~ s/^/@{[sprintf '%3d', $i++]}: /gm;
+        $self->{output} =~ s|^|<span class="$classes{line_number}">@{[sprintf '%3d', $i++]}</span> |gm;
     }
     
     ## add <pre>...</pre>?
@@ -219,24 +220,27 @@ C<.h-com> - for a comment, C<< <!-- ... --> >>
 
 =item *
 
-C<h-ab> - for the characters C<<'<'>> and C<<'>'>> as tag delimiters
+C<.h-ab> - for the characters C<< '<' >> and C<< '>' >> as tag delimiters
 
 =item *
 
-C<h-tag> - for the tag name of an element
+C<.h-tag> - for the tag name of an element
 
 =item *
 
-C<h-attr> - for the attribute name
-
+C<.h-attr> - for the attribute name
 
 =item *
 
-C<h-attv> - for the attribute value
+C<.h-attv> - for the attribute value
 
 =item *
 
 C<.h-ent> - for any entities: C<&eacute;> C<&#171;>
+
+=item *
+
+C<.h-lno> - for the line numbers
 
 =back
 

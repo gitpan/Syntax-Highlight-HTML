@@ -1,5 +1,9 @@
 Revision history for Syntax-Highlight-HTML
 
+0.02    2004.07.28
+        Corrected some errors in the documentation.
+        Added style for line numbers.
+
 0.01    2004.07.28
         First version, released on an unsuspecting world.
 
