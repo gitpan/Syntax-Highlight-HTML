@@ -1,5 +1,20 @@
 Revision history for Syntax-Highlight-HTML
 
+0.03    2004.10.16
+        RT#7986 (Allen Day): <pre></pre> output even when disabled
+        Minor code change in new().
+        Added t/distchk.t (Test::Distribution).
+        Improved documentation. 
+
+0.02_03 2004.07.31
+        Minor documentation update.
+
+0.02_02 2004.07.30
+        Added some tests in t/01basic.t
+
+0.02_01 2004.07.28
+        Minor documentation update.
+
 0.02    2004.07.28
         Corrected some errors in the documentation.
         Added style for line numbers.

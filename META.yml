@@ -1,8 +1,9 @@
 --- #YAML:1.0
 name: Syntax-Highlight-HTML
-version: 0.02
-author: |-
-  Sébastien Aperghis-Tramoni <sebastien@aperghis.net>
+version: 0.03
+author:
+  - |-
+    Sébastien Aperghis-Tramoni <sebastien@aperghis.net>
 abstract: Highlight HTML syntax
 license: perl
 requires:
@@ -10,5 +11,5 @@ requires:
 provides:
   Syntax::Highlight::HTML:
     file: lib/Syntax/Highlight/HTML.pm
-    version: 0.02
-generated_by: Module::Build version 0.25
+    version: 0.03
+generated_by: Module::Build version 0.26

@@ -7,7 +7,6 @@
  * it under the same terms as Perl itself.                                *
  * ====================================================================== */
 
-
 .h-decl { color: #336699; font-style: italic; }   /* doctype declaration  */
 .h-pi   { color: #336699;                     }   /* process instruction  */
 .h-com  { color: #338833; font-style: italic; }   /* comment              */

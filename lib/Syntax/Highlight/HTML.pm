@@ -3,7 +3,7 @@ use strict;
 use HTML::Parser;
 
 { no strict;
-  $VERSION = '0.02';
+  $VERSION = '0.03';
   @ISA = qw(HTML::Parser);
 }
 
@@ -11,9 +11,9 @@ use HTML::Parser;
 
 Syntax::Highlight::HTML - Highlight HTML syntax
 
-=head1 Version
+=head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
@@ -34,14 +34,52 @@ my %defaults = (
     nnn     => 0, # add line numbers (default: no)
 );
 
-=head1 Synopsis
+=head1 SYNOPSIS
 
     use Syntax::Highlight::HTML;
 
     my $highlighter = new Syntax::Highlight::HTML;
-    $colored = $highlighter->parse($html);
+    $output = $highlighter->parse($html);
 
-=head1 Description
+If C<$html> contains the following HTML fragment: 
+
+    <!-- a description list -->
+    <dl compact="compact">
+      <dt>some word</dt>
+      <dd>the description of the word. Plus some <a href="/definitions/other_word"
+      >reference</a> towards another definition. </dd>
+    </dl>
+
+then the resulting HTML contained in C<$output> will render like this: 
+
+=begin html
+
+<style type="text/css">
+<!--
+.h-decl { color: #336699; font-style: italic; }   /* doctype declaration  */
+.h-pi   { color: #336699;                     }   /* process instruction  */
+.h-com  { color: #338833; font-style: italic; }   /* comment              */
+.h-ab   { color: #000000; font-weight: bold;  }   /* angles as tag delim. */
+.h-tag  { color: #993399; font-weight: bold;  }   /* tag name             */
+.h-attr { color: #000000; font-weight: bold;  }   /* attribute name       */
+.h-attv { color: #333399;                     }   /* attribute value      */
+.h-ent  { color: #cc3333;                     }   /* entity               */
+.h-lno  { color: #aaaaaa; background: #f7f7f7;}   /* line numbers         */
+-->
+</style>
+
+<pre>
+    <span class="h-com">&lt;!-- a description list --&gt;</span>
+    <span class="h-ab">&lt;</span><span class="h-tag">dl</span> <span class="h-attr">compact</span>=<span class="h-attv">"compact</span>"<span class="h-ab">&gt;</span>
+      <span class="h-ab">&lt;</span><span class="h-tag">dt</span><span class="h-ab">&gt;</span>some word<span class="h-ab">&lt;/</span><span class="h-tag">dt</span><span class="h-ab">&gt;</span>
+      <span class="h-ab">&lt;</span><span class="h-tag">dd</span><span class="h-ab">&gt;</span>the description of the word. Plus some <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/definitions/other_word</span>"
+      <span class="h-ab">&gt;</span>reference<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span> towards another definition. <span class="h-ab">&lt;/</span><span class="h-tag">dd</span><span class="h-ab">&gt;</span>
+    <span class="h-ab">&lt;/</span><span class="h-tag">dl</span><span class="h-ab">&gt;</span>
+</pre>
+
+=end html
+
+=head1 DESCRIPTION
 
 This module is designed to take raw HTML input and highlight it (using a CSS 
 stylesheet, see L<"Notes"> for the classes). The returned HTML code is ready 
@@ -50,7 +88,7 @@ for inclusion in a web page.
 It is intented to be used as an highlighting filter, and as such does not reformat 
 or reindent the original HTML code. 
 
-=head1 Methods
+=head1 METHODS
 
 =over 4
 
@@ -83,7 +121,7 @@ To avoid surrounding the result by the C<< <pre>...</pre> >> tags:
 =cut
 
 sub new {
-    my $self = Syntax::Highlight::HTML->SUPER::new(
+    my $self = __PACKAGE__->SUPER::new(
         # API version
         api_version      => 3, 
 
@@ -108,7 +146,7 @@ sub new {
     
     my %args = @_;
     for my $arg (keys %defaults) {
-        $self->{options}{$arg} = $args{$arg} if $args{$arg}
+        $self->{options}{$arg} = $args{$arg} if defined $args{$arg}
     }
     
     $self->{output} = '';
@@ -120,6 +158,10 @@ sub new {
 
 Parse the HTML code given in argument and returns the highlighted HTML code, 
 ready for inclusion in a web page. 
+
+B<Example>
+
+    $highlighter->parse("<p>Hello, world.</p>");
 
 =cut
 
@@ -143,11 +185,17 @@ sub parse {
     return $self->{output}
 }
 
+=back
+
+=head2 Internals Methods
+
+The following methods are for internal use only. 
+
+=over 4
+
 =item _highlight_tag()
 
-I<Internal method: C<HTML::Parser> tags handler>
-
-Highlights a tag. 
+C<HTML::Parser> tags handler: highlights a tag. 
 
 =cut
 
@@ -182,9 +230,7 @@ sub _highlight_tag {
 
 =item _highlight_text()
 
-I<Internal method: C<HTML::Parser> text handler>
-
-Highlights text. 
+C<HTML::Parser> text handler: highlights text. 
 
 =cut
 
@@ -196,9 +242,9 @@ sub _highlight_text {
 
 =back
 
-=head1 Notes
+=head1 NOTES
 
-The result HTML uses CSS to colourize the syntax. Here are the classes 
+The resulting HTML uses CSS to colourize the syntax. Here are the classes 
 that you can define in your stylesheet. 
 
 =over 4
@@ -244,24 +290,101 @@ C<.h-lno> - for the line numbers
 
 =back
 
-An example stylesheet can be found in F<examples/html-syntax.css>.
+An example stylesheet can be found in F<eg/html-syntax.css>.
 
-=head1 Author
+=head1 EXAMPLE
 
-Sébastien Aperghis-Tramoni, E<lt>sebastien@aperghis.netE<gt>
+Here is an example of generated HTML output. It was generated with the 
+script F<eg/highlight.pl>. 
 
-=head1 See Also
+The following HTML fragment (which is the beginning of 
+L<http://search.cpan.org/~saper/>)
+
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+    <html>
+     <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" href="/s/style.css" type="text/css">
+      <title>search.cpan.org: S&#233;bastien Aperghis-Tramoni</title>
+     </head>
+     <body id="cpansearch">
+    <center><div class="logo"><a href="/"><img src="/s/img/cpan_banner.png" alt="CPAN"></a></div></center>
+    <div class="menubar">
+     <a href="/">Home</a>
+    &middot; <a href="/author/">Authors</a>
+    &middot; <a href="/recent">Recent</a>
+    &middot; <a href="/news">News</a>
+    &middot; <a href="/mirror">Mirrors</a>
+    &middot; <a href="/faq.html">FAQ</a>
+    &middot; <a href="/feedback">Feedback</a>
+    </div>
+    <form method="get" action="/search" name="f" class="searchbox">
+    <input type="text" name="query" value="" size="35">
+    <br>in <select name="mode">
+     <option value="all">All</option>
+     <option value="module" >Modules</option>
+     <option value="dist" >Distributions</option>
+     <option value="author" >Authors</option>
+    </select>&nbsp;<input type="submit" value="CPAN Search">
+    </form>
+
+will be rendered like this (using the CSS stylesheet F<eg/html-syntax.css>): 
+
+=begin html
+
+<pre>
+<span class="h-lno">  1</span> <span class="h-decl">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;</span>
+<span class="h-lno">  2</span> <span class="h-ab">&lt;</span><span class="h-tag">html</span><span class="h-ab">&gt;</span>
+<span class="h-lno">  3</span>  <span class="h-ab">&lt;</span><span class="h-tag">head</span><span class="h-ab">&gt;</span>
+<span class="h-lno">  4</span>   <span class="h-ab">&lt;</span><span class="h-tag">meta</span> <span class="h-attr">http-equiv</span>=<span class="h-attv">"Content-Type</span>" <span class="h-attr">content</span>=<span class="h-attv">"text/html; charset=iso-8859-1</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno">  5</span>   <span class="h-ab">&lt;</span><span class="h-tag">link</span> <span class="h-attr">rel</span>=<span class="h-attv">"stylesheet</span>" <span class="h-attr">href</span>=<span class="h-attv">"/s/style.css</span>" <span class="h-attr">type</span>=<span class="h-attv">"text/css</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno">  6</span>   <span class="h-ab">&lt;</span><span class="h-tag">title</span><span class="h-ab">&gt;</span>search.cpan.org: S<span class="h-ent">&amp;#233;</span>bastien Aperghis-Tramoni<span class="h-ab">&lt;/</span><span class="h-tag">title</span><span class="h-ab">&gt;</span>
+<span class="h-lno">  7</span>  <span class="h-ab">&lt;/</span><span class="h-tag">head</span><span class="h-ab">&gt;</span>
+<span class="h-lno">  8</span>  <span class="h-ab">&lt;</span><span class="h-tag">body</span> <span class="h-attr">id</span>=<span class="h-attv">"cpansearch</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno">  9</span> <span class="h-ab">&lt;</span><span class="h-tag">center</span><span class="h-ab">&gt;</span><span class="h-ab">&lt;</span><span class="h-tag">div</span> <span class="h-attr">class</span>=<span class="h-attv">"logo</span>"<span class="h-ab">&gt;</span><span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/</span>"<span class="h-ab">&gt;</span><span class="h-ab">&lt;</span><span class="h-tag">img</span> <span class="h-attr">src</span>=<span class="h-attv">"/s/img/cpan_banner.png</span>" <span class="h-attr">alt</span>=<span class="h-attv">"CPAN</span>"<span class="h-ab">&gt;</span><span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span><span class="h-ab">&lt;/</span><span class="h-tag">div</span><span class="h-ab">&gt;</span><span class="h-ab">&lt;/</span><span class="h-tag">center</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 10</span> <span class="h-ab">&lt;</span><span class="h-tag">div</span> <span class="h-attr">class</span>=<span class="h-attv">"menubar</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno"> 11</span>  <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/</span>"<span class="h-ab">&gt;</span>Home<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 12</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/author/</span>"<span class="h-ab">&gt;</span>Authors<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 13</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/recent</span>"<span class="h-ab">&gt;</span>Recent<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 14</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/news</span>"<span class="h-ab">&gt;</span>News<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 15</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/mirror</span>"<span class="h-ab">&gt;</span>Mirrors<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 16</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/faq.html</span>"<span class="h-ab">&gt;</span>FAQ<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 17</span> <span class="h-ent">&amp;middot;</span> <span class="h-ab">&lt;</span><span class="h-tag">a</span> <span class="h-attr">href</span>=<span class="h-attv">"/feedback</span>"<span class="h-ab">&gt;</span>Feedback<span class="h-ab">&lt;/</span><span class="h-tag">a</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 18</span> <span class="h-ab">&lt;/</span><span class="h-tag">div</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 19</span> <span class="h-ab">&lt;</span><span class="h-tag">form</span> <span class="h-attr">method</span>=<span class="h-attv">"get</span>" <span class="h-attr">action</span>=<span class="h-attv">"/search</span>" <span class="h-attr">name</span>=<span class="h-attv">"f</span>" <span class="h-attr">class</span>=<span class="h-attv">"searchbox</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno"> 20</span> <span class="h-ab">&lt;</span><span class="h-tag">input</span> <span class="h-attr">type</span>=<span class="h-attv">"text</span>" <span class="h-attr">name</span>=<span class="h-attv">"query</span>" <span class="h-attr">value</span>=<span class="h-attv">"</span>" <span class="h-attr">size</span>=<span class="h-attv">"35</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno"> 21</span> <span class="h-ab">&lt;</span><span class="h-tag">br</span><span class="h-ab">&gt;</span>in <span class="h-ab">&lt;</span><span class="h-tag">select</span> <span class="h-attr">name</span>=<span class="h-attv">"mode</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno"> 22</span>  <span class="h-ab">&lt;</span><span class="h-tag">option</span> <span class="h-attr">value</span>=<span class="h-attv">"all</span>"<span class="h-ab">&gt;</span>All<span class="h-ab">&lt;/</span><span class="h-tag">option</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 23</span>  <span class="h-ab">&lt;</span><span class="h-tag">option</span> <span class="h-attr">value</span>=<span class="h-attv">"module</span>" <span class="h-ab">&gt;</span>Modules<span class="h-ab">&lt;/</span><span class="h-tag">option</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 24</span>  <span class="h-ab">&lt;</span><span class="h-tag">option</span> <span class="h-attr">value</span>=<span class="h-attv">"dist</span>" <span class="h-ab">&gt;</span>Distributions<span class="h-ab">&lt;/</span><span class="h-tag">option</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 25</span>  <span class="h-ab">&lt;</span><span class="h-tag">option</span> <span class="h-attr">value</span>=<span class="h-attv">"author</span>" <span class="h-ab">&gt;</span>Authors<span class="h-ab">&lt;/</span><span class="h-tag">option</span><span class="h-ab">&gt;</span>
+<span class="h-lno"> 26</span> <span class="h-ab">&lt;/</span><span class="h-tag">select</span><span class="h-ab">&gt;</span><span class="h-ent">&amp;nbsp;</span><span class="h-ab">&lt;</span><span class="h-tag">input</span> <span class="h-attr">type</span>=<span class="h-attv">"submit</span>" <span class="h-attr">value</span>=<span class="h-attv">"CPAN Search</span>"<span class="h-ab">&gt;</span>
+<span class="h-lno"> 27</span> <span class="h-ab">&lt;/</span><span class="h-tag">form</span><span class="h-ab">&gt;</span>
+</pre>
+
+=end html
+
+=head1 CAVEATS
+
+C<Syntax::Highlight::HTML> relies on C<HTML::Parser> for parsing the HTML 
+and therefore suffers from the same limitations. 
+
+=head1 SEE ALSO
 
 L<HTML::Parser>
 
-=head1 Bugs
+=head1 AUTHORS
+
+SE<eacute>bastien Aperghis-Tramoni, E<lt>sebastien@aperghis.netE<gt>
+
+=head1 BUGS
 
 Please report any bugs or feature requests to
 C<bug-syntax-highlight-html@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.  I will be notified, and then you'll automatically
+L<https://rt.cpan.org/>.  I will be notified, and then you'll automatically
 be notified of progress on your bug as I make changes.
 
-=head1 Copyright & License
+=head1 COPYRIGHT & LICENSE
 
 Copyright (C)2004 Sébastien Aperghis-Tramoni, All Rights Reserved.
 
